@@ -67,7 +67,7 @@ function buildVigenereSquare() {
 }
 
 function startAnimation(mode) {
-  stopAnimation();
+  stopAnimation(false);
 
   const text = inputText.value.toUpperCase();
   const key = cleanKey(keyInput.value);
@@ -87,21 +87,15 @@ function startAnimation(mode) {
 
   const steps = createSteps(text, key, mode);
 
-  if (steps.length === 0) {
-    explanation.textContent = "Im Text wurden keine Buchstaben A–Z gefunden.";
-    return;
-  }
-
   let index = 0;
   let result = "";
   isRunning = true;
 
-  showStep(steps[index], mode);
-  result += steps[index].resultChar;
-  output.textContent = result;
-  index++;
+  showNextStep();
 
-  animationTimer = setInterval(() => {
+  animationTimer = setInterval(showNextStep, getDelay);
+
+  function showNextStep() {
     if (!isRunning) return;
 
     if (index >= steps.length) {
@@ -110,11 +104,15 @@ function startAnimation(mode) {
       return;
     }
 
-    showStep(steps[index], mode);
-    result += steps[index].resultChar;
+    const step = steps[index];
+
+    showStep(step, mode);
+
+    result += step.resultChar;
     output.textContent = result;
+
     index++;
-  }, getDelay());
+  }
 }
 
 function createSteps(text, key, mode) {
@@ -122,46 +120,45 @@ function createSteps(text, key, mode) {
   let keyIndex = 0;
 
   for (let i = 0; i < text.length; i++) {
-    const char = text[i];
+    const char = normalizeChar(text[i]);
 
     if (!alphabet.includes(char)) {
       steps.push({
         isLetter: false,
-        resultChar: char
+        originalChar: text[i],
+        resultChar: text[i]
       });
       continue;
     }
 
-    const textPos = alphabet.indexOf(char);
+    const inputPos = alphabet.indexOf(char);
     const keyChar = key[keyIndex % key.length];
     const keyPos = alphabet.indexOf(keyChar);
 
-    let resultPos;
     let row;
     let col;
+    let resultChar;
 
     if (mode === "encrypt") {
       row = keyPos;
-      col = textPos;
-      resultPos = (row + col) % 26;
+      col = inputPos;
+      resultChar = alphabet[(row + col) % 26];
     } else {
       row = keyPos;
-      resultPos = textPos;
-      col = (resultPos - row + 26) % 26;
-    }
 
-    const resultChar = alphabet[resultPos];
+      // Beim Entschlüsseln suchen wir den Geheimtextbuchstaben in der Schlüssel-Zeile.
+      // Die Spalte darüber ist der Klartextbuchstabe.
+      col = (inputPos - row + 26) % 26;
+      resultChar = alphabet[col];
+    }
 
     steps.push({
       isLetter: true,
-      textChar: char,
-      textPos,
+      inputChar: char,
       keyChar,
-      keyPos,
       row,
       col,
-      resultChar,
-      resultPos
+      resultChar
     });
 
     keyIndex++;
@@ -187,10 +184,10 @@ function showStep(step, mode) {
     explanation.innerHTML = `
       Schlüsselbuchstabe:
       <span class="keyChar">${step.keyChar}</span>
-      → Zeile suchen.
+      → Zeile suchen.<br>
       Klartextbuchstabe:
-      <span class="currentChar">${step.textChar}</span>
-      → Spalte suchen.
+      <span class="currentChar">${step.inputChar}</span>
+      → Spalte suchen.<br>
       Schnittpunkt:
       <span class="resultChar">${step.resultChar}</span>.
     `;
@@ -198,10 +195,10 @@ function showStep(step, mode) {
     explanation.innerHTML = `
       Schlüsselbuchstabe:
       <span class="keyChar">${step.keyChar}</span>
-      → Zeile suchen.
+      → Zeile suchen.<br>
       Geheimtextbuchstabe:
-      <span class="resultChar">${step.textChar}</span>
-      → in dieser Zeile suchen.
+      <span class="resultChar">${step.inputChar}</span>
+      → in dieser Zeile suchen.<br>
       Oben in der Spalte steht der Klartextbuchstabe:
       <span class="currentChar">${step.resultChar}</span>.
     `;
@@ -213,10 +210,6 @@ function highlightCell(row, col) {
   const colHeader = document.querySelector(`[data-col-header="${col}"]`);
   const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
 
-  if (rowHeader) rowHeader.classList.add("rowHighlight");
-  if (colHeader) colHeader.classList.add("colHighlight");
-  if (cell) cell.classList.add("resultHighlight");
-
   document.querySelectorAll(`[data-row="${row}"]`).forEach(td => {
     td.classList.add("rowHighlight");
   });
@@ -225,6 +218,8 @@ function highlightCell(row, col) {
     td.classList.add("colHighlight");
   });
 
+  if (rowHeader) rowHeader.classList.add("rowHighlight");
+  if (colHeader) colHeader.classList.add("colHighlight");
   if (cell) cell.classList.add("resultHighlight");
 }
 
@@ -243,15 +238,23 @@ function cleanKey(key) {
     .replaceAll("Ö", "OE")
     .replaceAll("Ü", "UE")
     .split("")
+    .map(normalizeChar)
     .filter(char => alphabet.includes(char))
     .join("");
+}
+
+function normalizeChar(char) {
+  return char
+    .replace("Ä", "A")
+    .replace("Ö", "O")
+    .replace("Ü", "U");
 }
 
 function getDelay() {
   const value = Number(speedRange.value);
 
-  const minDelay = 100;   // 10 Zeichen pro Sekunde
-  const maxDelay = 2000;  // 2 Sekunden pro Zeichen
+  const minDelay = 100;
+  const maxDelay = 2000;
 
   return Math.round(maxDelay - (value / 100) * (maxDelay - minDelay));
 }
@@ -267,7 +270,7 @@ function updateSpeedLabel() {
   }
 }
 
-function stopAnimation(clearText = true) {
+function stopAnimation(showMessage = true) {
   isRunning = false;
 
   if (animationTimer) {
@@ -277,7 +280,7 @@ function stopAnimation(clearText = true) {
 
   clearHighlights();
 
-  if (clearText) {
+  if (showMessage) {
     explanation.textContent = "Animation gestoppt.";
   }
 }
@@ -292,7 +295,7 @@ function clearAll() {
 }
 
 function escapeHtml(str) {
-  return str
+  return String(str)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
