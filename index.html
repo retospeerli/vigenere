@@ -9,24 +9,47 @@
 
 <div class="app">
   <h1>Vigenère-Verschlüsselung</h1>
+  <p class="intro">
+    Das Schlüsselwort bestimmt die Zeile. Der Klartextbuchstabe bestimmt die Spalte.
+    Im Schnittpunkt findest du den verschlüsselten Buchstaben.
+  </p>
 
-  <label>Text</label>
+  <label for="inputText">Text</label>
   <textarea id="inputText" placeholder="Gib hier deinen Text ein..."></textarea>
 
-  <label>Schlüsselwort</label>
+  <label for="keyInput">Schlüsselwort</label>
   <input id="keyInput" type="text" placeholder="z.B. GEHEIM">
 
-  <div class="buttons">
+  <div class="controls">
     <button id="encryptBtn">Verschlüsseln</button>
     <button id="decryptBtn">Entschlüsseln</button>
+    <button id="stopBtn">Stopp</button>
     <button id="clearBtn">Löschen</button>
+  </div>
+
+  <div class="speedBox">
+    <label for="speedRange">
+      Geschwindigkeit:
+      <span id="speedLabel">1 Zeichen/Sekunde</span>
+    </label>
+    <input id="speedRange" type="range" min="0" max="100" value="40">
+    <div class="speedHint">
+      links: 2 Sekunden pro Zeichen · rechts: 10 Zeichen pro Sekunde
+    </div>
+  </div>
+
+  <h2>Aktueller Schritt</h2>
+  <div id="explanation" class="explanation">
+    Starte die Animation.
   </div>
 
   <h2>Ergebnis</h2>
   <div id="output" class="output"></div>
 
-  <h2>Schritte</h2>
-  <div id="steps" class="steps"></div>
+  <h2>Vigenère-Quadrat</h2>
+  <div class="squareWrap">
+    <table id="vigenereSquare"></table>
+  </div>
 </div>
 
 <script src="app.js"></script>
