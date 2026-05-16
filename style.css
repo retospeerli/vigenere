@@ -7,9 +7,15 @@ body {
 
 .app {
   display: grid;
-  grid-template-columns: minmax(560px, 1fr) 660px;
+
+  /* links mehr Platz für Texte */
+  /* rechts exakt nur so breit wie nötig fürs Quadrat */
+  grid-template-columns: minmax(650px, 1fr) 560px;
+
   gap: 14px;
+
   height: 100vh;
+
   box-sizing: border-box;
   padding: 14px;
 }
@@ -86,10 +92,13 @@ textarea {
 
 .keyDisplay {
   min-height: 42px;
+
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+
   align-items: center;
+
   font-size: 24px;
   letter-spacing: 1px;
 }
@@ -98,18 +107,25 @@ textarea {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+
   width: 34px;
   height: 34px;
+
   border-radius: 8px;
+
   background: #eeeeee;
+
   font-weight: bold;
+
   transition: all 0.2s ease;
 }
 
 .keyLetter.activeKey {
   background: #e53935;
   color: white;
+
   transform: scale(1.25);
+
   box-shadow: 0 0 14px #e53935;
 }
 
@@ -123,15 +139,20 @@ textarea {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+
   margin-top: 18px;
 }
 
 button {
   padding: 12px 18px;
+
   font-size: 17px;
+
   border: none;
   border-radius: 10px;
+
   cursor: pointer;
+
   background: #263238;
   color: white;
 }
@@ -146,8 +167,11 @@ button:hover {
 
 .speedBox {
   margin-top: 20px;
+
   padding: 14px;
+
   background: #eef4ff;
+
   border-radius: 10px;
 }
 
@@ -164,34 +188,56 @@ input[type="range"] {
 
 .output {
   min-height: 120px;
+
   padding: 15px;
+
   background: #eef7ee;
+
   border: 2px solid #8bc34a;
+
   border-radius: 10px;
+
   font-size: 25px;
+
   letter-spacing: 2px;
+
   line-height: 1.45;
+
   word-break: break-word;
+
   white-space: pre-wrap;
 }
 
+/* WICHTIG:
+   Quadrat muss immer komplett sichtbar bleiben.
+   Keine Scrollbalken.
+*/
 .squareWrap {
-  overflow: auto;
+
+  overflow: visible;
+
   border: 2px solid #ddd;
+
   border-radius: 12px;
-  padding: 6px;
+
+  padding: 4px;
+
   background: #fafafa;
 
-  /* Platz für Erklärung unten reserviert */
-  height: calc(100vh - 260px);
+  height: auto;
 }
 
 .explanation {
   min-height: 120px;
+
   padding: 15px;
+
   background: #f5f5f5;
+
   border-radius: 10px;
+
   font-size: 19px;
+
   line-height: 1.5;
 }
 
@@ -200,39 +246,53 @@ table {
   margin: 0 auto;
 }
 
+/* kleiner, damit garantiert sichtbar */
 td,
 th {
-  width: 23px;
-  height: 23px;
-  min-width: 23px;
+
+  width: 19px;
+  height: 19px;
+  min-width: 19px;
+
   text-align: center;
+
   border: 1px solid #ccc;
+
   font-weight: bold;
-  font-size: 12px;
+
+  font-size: 10px;
+
   padding: 0;
 }
 
 th {
   background: #263238;
   color: white;
+
   position: sticky;
   top: 0;
+
   z-index: 3;
 }
 
 .rowHeader {
   background: #1565c0;
   color: white;
+
   position: sticky;
   left: 0;
+
   z-index: 2;
 }
 
 .corner {
   background: #111;
+
   position: sticky;
+
   left: 0;
   top: 0;
+
   z-index: 4;
 }
 
@@ -248,10 +308,15 @@ th {
 
 .resultHighlight {
   background: #ff5252 !important;
+
   color: white;
-  transform: scale(1.35);
+
+  transform: scale(1.45);
+
   box-shadow: 0 0 12px #ff0000;
+
   z-index: 5;
+
   position: relative;
 }
 
@@ -274,10 +339,6 @@ th {
 
   .app {
     grid-template-columns: 1fr;
-    height: auto;
-  }
-
-  .squareWrap {
     height: auto;
   }
 
