@@ -19,8 +19,13 @@
     <label for="inputText">Text</label>
     <textarea id="inputText" placeholder="Gib hier deinen Text ein..."></textarea>
 
-    <label for="keyInput">Schlüsselwort</label>
+    <label for="keyInput">Geheimwort / Schlüsselwort</label>
     <input id="keyInput" type="text" placeholder="z.B. GEHEIM">
+
+    <div class="keyBox">
+      <div class="keyTitle">Verwendetes Geheimwort</div>
+      <div id="keyDisplay" class="keyDisplay">Noch kein Geheimwort eingegeben.</div>
+    </div>
 
     <div class="controls">
       <button id="encryptBtn">Verschlüsseln</button>
@@ -34,7 +39,7 @@
         Geschwindigkeit:
         <span id="speedLabel">1 Zeichen/Sekunde</span>
       </label>
-      <input id="speedRange" type="range" min="0" max="100" value="40">
+      <input id="speedRange" type="range" min="0" max="100" value="25">
       <div class="speedHint">
         links: 2 Sekunden pro Zeichen · rechts: 10 Zeichen pro Sekunde
       </div>
