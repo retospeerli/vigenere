@@ -5,6 +5,7 @@ const keyInput = document.getElementById("keyInput");
 const output = document.getElementById("output");
 const explanation = document.getElementById("explanation");
 const square = document.getElementById("vigenereSquare");
+const keyDisplay = document.getElementById("keyDisplay");
 
 const encryptBtn = document.getElementById("encryptBtn");
 const decryptBtn = document.getElementById("decryptBtn");
@@ -25,6 +26,11 @@ decryptBtn.addEventListener("click", () => startAnimation("decrypt"));
 stopBtn.addEventListener("click", stopAnimation);
 clearBtn.addEventListener("click", clearAll);
 speedRange.addEventListener("input", updateSpeedLabel);
+
+keyInput.addEventListener("input", () => {
+  const key = cleanKey(keyInput.value);
+  renderKeyDisplay(key);
+});
 
 function buildVigenereSquare() {
   square.innerHTML = "";
@@ -73,6 +79,7 @@ function startAnimation(mode) {
 
   output.textContent = "";
   explanation.textContent = "";
+  renderKeyDisplay(key);
 
   if (!text.trim()) {
     explanation.textContent = "Bitte gib zuerst einen Text ein.";
@@ -80,7 +87,7 @@ function startAnimation(mode) {
   }
 
   if (!key) {
-    explanation.textContent = "Bitte gib ein Schlüsselwort ein.";
+    explanation.textContent = "Bitte gib ein Geheimwort ein.";
     return;
   }
 
@@ -95,6 +102,7 @@ function runStep(steps, index, currentResult, mode) {
 
   if (index >= steps.length) {
     clearHighlights();
+    clearKeyHighlight();
     explanation.innerHTML = "Fertig. Das Ergebnis steht oben.";
     isRunning = false;
     return;
@@ -103,6 +111,9 @@ function runStep(steps, index, currentResult, mode) {
   const step = steps[index];
 
   if (!step.isLetter) {
+    clearHighlights();
+    clearKeyHighlight();
+
     const newResult = currentResult + step.resultChar;
     output.textContent = newResult;
 
@@ -131,12 +142,19 @@ function runStep(steps, index, currentResult, mode) {
 
 function animateLetter(step, mode, done) {
   clearHighlights();
+  clearKeyHighlight();
+  highlightKeyLetter(step.keyIndex);
 
   const phaseDelay = getPhaseDelay();
 
   if (mode === "encrypt") {
     explanation.innerHTML = `
-      1. Schlüsselbuchstabe:
+      1. Geheimwort:
+      <span class="keyChar">${step.keyChar}</span>
+      wird verwendet.
+      Danach springt die Markierung einen Buchstaben weiter.
+      <br>
+      Schlüsselbuchstabe:
       <span class="keyChar">${step.keyChar}</span>
       → diese Zeile wird gesucht.
     `;
@@ -149,6 +167,7 @@ function animateLetter(step, mode, done) {
         → diese Spalte wird gesucht.
       `;
       highlightRowAndColumn(step.row, step.col);
+      highlightKeyLetter(step.keyIndex);
     }, phaseDelay);
 
     schedule(() => {
@@ -156,7 +175,9 @@ function animateLetter(step, mode, done) {
         3. Im Schnittpunkt steht der Geheimtextbuchstabe:
         <span class="resultChar">${step.resultChar}</span>.
       `;
+      highlightRowAndColumn(step.row, step.col);
       highlightFinalCell(step.row, step.col);
+      highlightKeyLetter(step.keyIndex);
     }, phaseDelay * 2);
 
     schedule(done, phaseDelay * 3);
@@ -164,7 +185,12 @@ function animateLetter(step, mode, done) {
 
   if (mode === "decrypt") {
     explanation.innerHTML = `
-      1. Schlüsselbuchstabe:
+      1. Geheimwort:
+      <span class="keyChar">${step.keyChar}</span>
+      wird verwendet.
+      Danach springt die Markierung einen Buchstaben weiter.
+      <br>
+      Schlüsselbuchstabe:
       <span class="keyChar">${step.keyChar}</span>
       → diese Zeile wird gesucht.
     `;
@@ -176,7 +202,8 @@ function animateLetter(step, mode, done) {
         <span class="resultChar">${step.inputChar}</span>
         → dieser Buchstabe wird in der Zeile gesucht.
       `;
-      highlightCipherInRow(step.row, step.inputChar);
+      highlightCipherInRow(step.row, step.inputChar, true);
+      highlightKeyLetter(step.keyIndex);
     }, phaseDelay);
 
     schedule(() => {
@@ -187,12 +214,9 @@ function animateLetter(step, mode, done) {
       `;
 
       highlightRowAndColumn(step.row, step.col);
-
-      // Der gefundene Geheimtextbuchstabe bleibt rot markiert.
-      highlightCipherInRow(step.row, step.inputChar);
-
-      // Der Klartextbuchstabe oben im schwarzen Balken wird grün markiert.
+      highlightCipherInRow(step.row, step.inputChar, false);
       highlightDecodedHeader(step.col);
+      highlightKeyLetter(step.keyIndex);
 
     }, phaseDelay * 2);
 
@@ -202,7 +226,7 @@ function animateLetter(step, mode, done) {
 
 function createSteps(text, key, mode) {
   const steps = [];
-  let keyIndex = 0;
+  let keyCounter = 0;
 
   for (let i = 0; i < text.length; i++) {
     const char = normalizeChar(text[i]);
@@ -215,8 +239,9 @@ function createSteps(text, key, mode) {
       continue;
     }
 
+    const keyIndex = keyCounter % key.length;
     const inputPos = alphabet.indexOf(char);
-    const keyChar = key[keyIndex % key.length];
+    const keyChar = key[keyIndex];
     const keyPos = alphabet.indexOf(keyChar);
 
     let row = keyPos;
@@ -235,15 +260,53 @@ function createSteps(text, key, mode) {
       isLetter: true,
       inputChar: char,
       keyChar,
+      keyIndex,
       row,
       col,
       resultChar
     });
 
-    keyIndex++;
+    keyCounter++;
   }
 
   return steps;
+}
+
+function renderKeyDisplay(key) {
+  keyDisplay.innerHTML = "";
+
+  if (!key) {
+    keyDisplay.textContent = "Noch kein Geheimwort eingegeben.";
+    return;
+  }
+
+  for (let i = 0; i < key.length; i++) {
+    const span = document.createElement("span");
+    span.className = "keyLetter";
+    span.dataset.keyIndex = i;
+    span.textContent = key[i];
+    keyDisplay.appendChild(span);
+  }
+
+  const jump = document.createElement("span");
+  jump.className = "keyJump";
+  jump.textContent = "↺ nach dem letzten Buchstaben wieder zum Anfang";
+  keyDisplay.appendChild(jump);
+}
+
+function highlightKeyLetter(index) {
+  clearKeyHighlight();
+
+  const letter = document.querySelector(`[data-key-index="${index}"]`);
+  if (letter) {
+    letter.classList.add("activeKey");
+  }
+}
+
+function clearKeyHighlight() {
+  document.querySelectorAll(".keyLetter").forEach(letter => {
+    letter.classList.remove("activeKey");
+  });
 }
 
 function highlightOnlyRow(row) {
@@ -280,8 +343,10 @@ function highlightFinalCell(row, col) {
   if (cell) cell.classList.add("resultHighlight");
 }
 
-function highlightCipherInRow(row, cipherChar) {
-  clearHighlights();
+function highlightCipherInRow(row, cipherChar, shouldClear) {
+  if (shouldClear) {
+    clearHighlights();
+  }
 
   const rowHeader = document.querySelector(`[data-row-header="${row}"]`);
   if (rowHeader) rowHeader.classList.add("rowHighlight");
@@ -341,6 +406,7 @@ function stopAnimation(showMessage = true) {
   timeouts = [];
 
   clearHighlights();
+  clearKeyHighlight();
 
   if (showMessage) {
     explanation.textContent = "Animation gestoppt.";
@@ -426,7 +492,9 @@ function clearAll() {
   keyInput.value = "";
   output.textContent = "";
   explanation.textContent = "Starte die Animation.";
+  keyDisplay.textContent = "Noch kein Geheimwort eingegeben.";
   clearHighlights();
+  clearKeyHighlight();
 }
 
 function escapeHtml(str) {
