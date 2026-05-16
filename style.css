@@ -7,11 +7,11 @@ body {
 
 .app {
   display: grid;
-  grid-template-columns: 430px 1fr;
-  gap: 22px;
+  grid-template-columns: minmax(560px, 1fr) 660px;
+  gap: 14px;
   height: 100vh;
   box-sizing: border-box;
-  padding: 20px;
+  padding: 14px;
 }
 
 .leftPanel,
@@ -19,13 +19,25 @@ body {
   background: white;
   border-radius: 18px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  padding: 20px;
   overflow: auto;
+}
+
+.leftPanel {
+  padding: 22px;
+}
+
+.rightPanel {
+  padding: 12px;
 }
 
 h1 {
   text-align: center;
   margin-top: 0;
+}
+
+.rightPanel h2 {
+  margin: 4px 0 10px 0;
+  text-align: center;
 }
 
 .intro {
@@ -54,8 +66,57 @@ input[type="text"] {
 }
 
 textarea {
-  height: 110px;
+  height: 190px;
   resize: vertical;
+  line-height: 1.4;
+}
+
+.keyBox {
+  margin-top: 16px;
+  padding: 12px;
+  background: #fff5f5;
+  border: 2px solid #ffcdd2;
+  border-radius: 12px;
+}
+
+.keyTitle {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.keyDisplay {
+  min-height: 42px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  font-size: 24px;
+  letter-spacing: 1px;
+}
+
+.keyLetter {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #eeeeee;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.keyLetter.activeKey {
+  background: #e53935;
+  color: white;
+  transform: scale(1.25);
+  box-shadow: 0 0 14px #e53935;
+}
+
+.keyJump {
+  font-size: 16px;
+  color: #777;
+  margin-left: 4px;
 }
 
 .controls {
@@ -102,7 +163,7 @@ input[type="range"] {
 }
 
 .explanation {
-  min-height: 90px;
+  min-height: 105px;
   padding: 15px;
   background: #f5f5f5;
   border-radius: 10px;
@@ -111,39 +172,42 @@ input[type="range"] {
 }
 
 .output {
-  min-height: 45px;
+  min-height: 120px;
   padding: 15px;
   background: #eef7ee;
   border: 2px solid #8bc34a;
   border-radius: 10px;
-  font-size: 26px;
+  font-size: 25px;
   letter-spacing: 2px;
+  line-height: 1.45;
   word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .squareWrap {
   overflow: auto;
   border: 2px solid #ddd;
   border-radius: 12px;
-  padding: 10px;
+  padding: 6px;
   background: #fafafa;
-  height: calc(100vh - 105px);
+  height: calc(100vh - 72px);
 }
 
 table {
   border-collapse: collapse;
-  margin: auto;
+  margin: 0 auto;
 }
 
 td,
 th {
-  width: 31px;
-  height: 31px;
-  min-width: 31px;
+  width: 23px;
+  height: 23px;
+  min-width: 23px;
   text-align: center;
   border: 1px solid #ccc;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 12px;
+  padding: 0;
 }
 
 th {
@@ -183,7 +247,7 @@ th {
 .resultHighlight {
   background: #ff5252 !important;
   color: white;
-  transform: scale(1.25);
+  transform: scale(1.35);
   box-shadow: 0 0 12px #ff0000;
   z-index: 5;
   position: relative;
@@ -204,7 +268,7 @@ th {
   font-weight: bold;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
   .app {
     grid-template-columns: 1fr;
     height: auto;
