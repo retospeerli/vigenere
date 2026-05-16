@@ -185,8 +185,15 @@ function animateLetter(step, mode, done) {
         Oben steht der Klartextbuchstabe:
         <span class="currentChar">${step.resultChar}</span>.
       `;
+
       highlightRowAndColumn(step.row, step.col);
-      highlightFinalCell(step.row, step.col);
+
+      // Der gefundene Geheimtextbuchstabe bleibt rot markiert.
+      highlightCipherInRow(step.row, step.inputChar);
+
+      // Der Klartextbuchstabe oben im schwarzen Balken wird grün markiert.
+      highlightDecodedHeader(step.col);
+
     }, phaseDelay * 2);
 
     schedule(done, phaseDelay * 3);
@@ -288,11 +295,37 @@ function highlightCipherInRow(row, cipherChar) {
   });
 }
 
+function highlightDecodedHeader(col) {
+  const header = document.querySelector(`[data-col-header="${col}"]`);
+
+  if (!header) return;
+
+  header.classList.add("colHighlight");
+
+  header.style.background = "#00c853";
+  header.style.color = "white";
+  header.style.transform = "scale(1.2)";
+  header.style.boxShadow = "0 0 12px #00c853";
+  header.style.zIndex = "20";
+}
+
 function clearHighlights() {
   document.querySelectorAll(
     ".rowHighlight, .colHighlight, .resultHighlight"
   ).forEach(el => {
-    el.classList.remove("rowHighlight", "colHighlight", "resultHighlight");
+    el.classList.remove(
+      "rowHighlight",
+      "colHighlight",
+      "resultHighlight"
+    );
+  });
+
+  document.querySelectorAll("[data-col-header]").forEach(el => {
+    el.style.background = "";
+    el.style.color = "";
+    el.style.transform = "";
+    el.style.boxShadow = "";
+    el.style.zIndex = "";
   });
 }
 
