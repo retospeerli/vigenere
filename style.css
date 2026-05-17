@@ -207,10 +207,14 @@ input[type="range"] {
   white-space: pre-wrap;
 }
 
-/* gesamte rechte Hälfte wird genutzt */
+/* echtes Quadrat */
 .squareWrap {
 
-  width: 100%;
+  width: fit-content;
+
+  max-width: 100%;
+
+  margin: 0 auto;
 
   overflow: visible;
 
@@ -245,25 +249,29 @@ table {
   margin: 0 auto;
 }
 
-/* skaliert automatisch auf 50% Fensterbreite */
+/* EXAKT QUADRATISCH */
 td,
 th {
 
-  width: 2.25vw;
-  height: 2.25vw;
-  min-width: 22px;
-  min-height: 22px;
+  width: 27px;
+  height: 27px;
 
-  max-width: 34px;
-  max-height: 34px;
+  min-width: 27px;
+  max-width: 27px;
+
+  min-height: 27px;
+  max-height: 27px;
+
+  box-sizing: border-box;
 
   text-align: center;
+  vertical-align: middle;
 
   border: 1px solid #ccc;
 
   font-weight: bold;
 
-  font-size: 1vw;
+  font-size: 14px;
 
   padding: 0;
 }
@@ -343,15 +351,6 @@ th {
   .app {
     grid-template-columns: 1fr;
     height: auto;
-  }
-
-  td,
-  th {
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
-    min-height: 24px;
-    font-size: 12px;
   }
 
 }
