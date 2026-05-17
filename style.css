@@ -8,12 +8,10 @@ body {
 .app {
   display: grid;
 
-  /* links mehr Platz für Texte */
-  /* rechts exakt nur so breit wie nötig fürs Quadrat */
-  grid-template-columns: minmax(650px, 1fr) 560px;
+  /* mehr Platz fürs grössere Quadrat */
+  grid-template-columns: minmax(620px, 1fr) 760px;
 
   gap: 14px;
-
   height: 100vh;
 
   box-sizing: border-box;
@@ -92,13 +90,10 @@ textarea {
 
 .keyDisplay {
   min-height: 42px;
-
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-
   align-items: center;
-
   font-size: 24px;
   letter-spacing: 1px;
 }
@@ -112,20 +107,16 @@ textarea {
   height: 34px;
 
   border-radius: 8px;
-
   background: #eeeeee;
 
   font-weight: bold;
-
   transition: all 0.2s ease;
 }
 
 .keyLetter.activeKey {
   background: #e53935;
   color: white;
-
   transform: scale(1.25);
-
   box-shadow: 0 0 14px #e53935;
 }
 
@@ -139,20 +130,15 @@ textarea {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-
   margin-top: 18px;
 }
 
 button {
   padding: 12px 18px;
-
   font-size: 17px;
-
   border: none;
   border-radius: 10px;
-
   cursor: pointer;
-
   background: #263238;
   color: white;
 }
@@ -167,11 +153,8 @@ button:hover {
 
 .speedBox {
   margin-top: 20px;
-
   padding: 14px;
-
   background: #eef4ff;
-
   border-radius: 10px;
 }
 
@@ -188,36 +171,24 @@ input[type="range"] {
 
 .output {
   min-height: 120px;
-
   padding: 15px;
-
   background: #eef7ee;
-
   border: 2px solid #8bc34a;
-
   border-radius: 10px;
 
   font-size: 25px;
-
   letter-spacing: 2px;
-
   line-height: 1.45;
 
   word-break: break-word;
-
   white-space: pre-wrap;
 }
 
-/* WICHTIG:
-   Quadrat muss immer komplett sichtbar bleiben.
-   Keine Scrollbalken.
-*/
+/* Quadrat bleibt immer vollständig sichtbar */
 .squareWrap {
-
   overflow: visible;
 
   border: 2px solid #ddd;
-
   border-radius: 12px;
 
   padding: 4px;
@@ -246,13 +217,12 @@ table {
   margin: 0 auto;
 }
 
-/* kleiner, damit garantiert sichtbar */
+/* ca. 1.5x grösser */
 td,
 th {
-
-  width: 19px;
-  height: 19px;
-  min-width: 19px;
+  width: 29px;
+  height: 29px;
+  min-width: 29px;
 
   text-align: center;
 
@@ -260,7 +230,7 @@ th {
 
   font-weight: bold;
 
-  font-size: 10px;
+  font-size: 15px;
 
   padding: 0;
 }
@@ -289,7 +259,6 @@ th {
   background: #111;
 
   position: sticky;
-
   left: 0;
   top: 0;
 
@@ -308,10 +277,9 @@ th {
 
 .resultHighlight {
   background: #ff5252 !important;
-
   color: white;
 
-  transform: scale(1.45);
+  transform: scale(1.35);
 
   box-shadow: 0 0 12px #ff0000;
 
@@ -335,11 +303,9 @@ th {
   font-weight: bold;
 }
 
-@media (max-width: 1200px) {
-
+@media (max-width: 1450px) {
   .app {
     grid-template-columns: 1fr;
     height: auto;
   }
-
 }
